@@ -1,8 +1,8 @@
 import { AppError } from "../../shared/errors/app-error";
 import { signToken } from "../../shared/lib/jwt";
-import { comparePassword, hashPassword } from "../../shared/lib/password";
+import { comparePassword } from "../../shared/lib/password";
 import { userRepository } from "../users/user.repository";
-import type { LoginInput, RegisterInput } from "./auth.validation";
+import type { LoginInput } from "./auth.validation";
 
 function toPublicUser(user: {
   _id: { toString(): string };
@@ -19,34 +19,6 @@ function toPublicUser(user: {
 }
 
 export class AuthService {
-  async register(input: RegisterInput) {
-    const totalUsers = await userRepository.count();
-    if (totalUsers > 0) {
-      throw new AppError("Registration is closed", 403);
-    }
-
-    const existing = await userRepository.findByEmail(input.email);
-    if (existing) {
-      throw new AppError("Email already registered", 409);
-    }
-
-    const password = await hashPassword(input.password);
-    const user = await userRepository.create({
-      name: input.name,
-      email: input.email,
-      password,
-      role: "admin",
-    });
-
-    const token = signToken({
-      sub: user._id.toString(),
-      email: user.email,
-      role: user.role,
-    });
-
-    return { user: toPublicUser(user), token };
-  }
-
   async login(input: LoginInput) {
     const user = await userRepository.findByEmailWithPassword(input.email);
     if (!user) {

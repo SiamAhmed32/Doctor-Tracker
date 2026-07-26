@@ -1,4 +1,11 @@
-import { Schema, model, type InferSchemaType, type Types } from "mongoose";
+import {
+  Schema,
+  model,
+  models,
+  type InferSchemaType,
+  type Model,
+  type Types,
+} from "mongoose";
 
 const patientSchema = new Schema(
   {
@@ -45,10 +52,28 @@ const patientSchema = new Schema(
 
 patientSchema.index({ doctor: 1, createdAt: -1 });
 patientSchema.index({ condition: 1, createdAt: -1 });
-patientSchema.index({ name: 1 });
+patientSchema.index(
+  {
+    name: "text",
+    phone: "text",
+    email: "text",
+    condition: "text",
+  },
+  {
+    name: "patient_text_search",
+    weights: {
+      name: 5,
+      condition: 3,
+      phone: 2,
+      email: 2,
+    },
+  },
+);
 
 export type PatientDocument = InferSchemaType<typeof patientSchema> & {
   _id: Types.ObjectId;
 };
 
-export const PatientModel = model("Patient", patientSchema);
+export const PatientModel =
+  (models.Patient as Model<PatientDocument>) ||
+  model<PatientDocument>("Patient", patientSchema);

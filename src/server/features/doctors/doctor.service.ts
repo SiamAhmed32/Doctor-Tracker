@@ -1,17 +1,10 @@
 import { AppError } from "../../shared/errors/app-error";
 import { buildCreatedAtFilter } from "../../shared/lib/date-range";
 import { buildPagination, getSkip } from "../../shared/lib/pagination";
+import { exactInsensitive } from "../../shared/lib/text-match";
 import { toPublicDoctor } from "./doctor.mapper";
 import { doctorRepository } from "./doctor.repository";
 import type { CreateDoctorInput, DoctorListQuery } from "./doctor.validation";
-
-function escapeRegex(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function exactInsensitive(value: string): RegExp {
-  return new RegExp(`^${escapeRegex(value)}$`, "i");
-}
 
 export class DoctorService {
   async create(input: CreateDoctorInput) {
@@ -45,20 +38,14 @@ export class DoctorService {
       filter.hospital = exactInsensitive(query.hospital);
     }
 
+    const useTextScore = Boolean(query.search);
     if (query.search) {
-      const pattern = new RegExp(escapeRegex(query.search), "i");
-      filter.$or = [
-        { name: pattern },
-        { email: pattern },
-        { specialization: pattern },
-        { hospital: pattern },
-        { phone: pattern },
-      ];
+      filter.$text = { $search: query.search };
     }
 
     const skip = getSkip(query.page, query.limit);
     const [items, total] = await Promise.all([
-      doctorRepository.findMany(filter, skip, query.limit),
+      doctorRepository.findMany(filter, skip, query.limit, useTextScore),
       doctorRepository.count(filter),
     ]);
 

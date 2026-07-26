@@ -7,12 +7,19 @@ export type JwtPayload = {
   role: string;
 };
 
+const SIGN_OPTIONS: jwt.SignOptions = {
+  expiresIn: env.jwtExpiresIn as jwt.SignOptions["expiresIn"],
+  algorithm: "HS256",
+};
+
+const VERIFY_OPTIONS: jwt.VerifyOptions = {
+  algorithms: ["HS256"],
+};
+
 export function signToken(payload: JwtPayload): string {
-  return jwt.sign(payload, env.jwtSecret, {
-    expiresIn: env.jwtExpiresIn as jwt.SignOptions["expiresIn"],
-  });
+  return jwt.sign(payload, env.jwtSecret, SIGN_OPTIONS);
 }
 
 export function verifyToken(token: string): JwtPayload {
-  return jwt.verify(token, env.jwtSecret) as JwtPayload;
+  return jwt.verify(token, env.jwtSecret, VERIFY_OPTIONS) as JwtPayload;
 }

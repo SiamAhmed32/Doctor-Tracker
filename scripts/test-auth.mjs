@@ -13,7 +13,7 @@ async function main() {
   const health = await fetch(`${base}/health`);
   console.log("health", health.status, await read(health));
 
-  const blocked = await fetch(`${base}/secure-check`);
+  const blocked = await fetch(`${base}/doctors`);
   console.log("secure no cookie", blocked.status, await read(blocked));
 
   const loginRes = await fetch(`${base}/auth/login`, {
@@ -35,10 +35,10 @@ async function main() {
   });
   console.log("me", me.status, await read(me));
 
-  const secure = await fetch(`${base}/secure-check`, {
+  const secure = await fetch(`${base}/doctors?page=1&limit=1`, {
     headers: { Cookie: cookieHeader },
   });
-  console.log("secure with cookie", secure.status, await read(secure));
+  console.log("protected route with cookie", secure.status);
 
   const logout = await fetch(`${base}/auth/logout`, {
     method: "POST",

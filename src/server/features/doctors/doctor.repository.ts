@@ -31,13 +31,19 @@ export class DoctorRepository {
     filter: DoctorFilter,
     skip: number,
     limit: number,
+    useTextScore = false,
   ): Promise<DoctorDocument[]> {
-    return DoctorModel.find(filter)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean()
-      .exec() as Promise<DoctorDocument[]>;
+    const query = DoctorModel.find(filter);
+
+    if (useTextScore) {
+      query.sort({ score: { $meta: "textScore" }, createdAt: -1 });
+    } else {
+      query.sort({ createdAt: -1 });
+    }
+
+    return query.skip(skip).limit(limit).lean().exec() as Promise<
+      DoctorDocument[]
+    >;
   }
 
   count(filter: DoctorFilter): Promise<number> {
