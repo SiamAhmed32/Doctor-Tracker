@@ -20,6 +20,7 @@ export class DashboardService {
       totalPatients,
       patientsPerDoctor,
       doctorsBySpecialization,
+      patientsByCondition,
       doctorTrendRaw,
       patientTrendRaw,
     ] = await Promise.all([
@@ -27,6 +28,7 @@ export class DashboardService {
       dashboardRepository.countPatients(),
       dashboardRepository.patientsPerDoctor(query.doctorLimit),
       dashboardRepository.doctorsBySpecialization(),
+      dashboardRepository.patientsByCondition(),
       dashboardRepository.dailyCreatedCounts(
         DoctorModel,
         range.from,
@@ -61,6 +63,7 @@ export class DashboardService {
       },
       patientsPerDoctor,
       doctorsBySpecialization,
+      patientsByCondition,
       trends: {
         doctors: doctorTrend,
         patients: patientTrend,

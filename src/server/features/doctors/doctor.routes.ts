@@ -11,6 +11,7 @@ import {
   doctorIdParamsSchema,
   doctorListQuerySchema,
   doctorPatientParamsSchema,
+  updateDoctorSchema,
 } from "./doctor.validation";
 
 const doctorRoutes = Router();
@@ -31,6 +32,13 @@ doctorRoutes.get(
   "/:id",
   validate(doctorIdParamsSchema, "params"),
   asyncHandler((req, res) => doctorController.getById(req, res)),
+);
+
+doctorRoutes.patch(
+  "/:id",
+  validate(doctorIdParamsSchema, "params"),
+  validate(updateDoctorSchema),
+  asyncHandler((req, res) => doctorController.update(req, res)),
 );
 
 doctorRoutes.get(

@@ -12,6 +12,7 @@ import { doctorService } from "./doctor.service";
 import type {
   CreateDoctorInput,
   DoctorListQuery,
+  UpdateDoctorInput,
 } from "./doctor.validation";
 
 export class DoctorController {
@@ -30,6 +31,15 @@ export class DoctorController {
     const { id } = getValidatedParams<{ id: string }>(req);
     const doctor = await doctorService.getById(id);
     res.status(200).json({ doctor });
+  }
+
+  async update(req: Request, res: Response): Promise<void> {
+    const { id } = getValidatedParams<{ id: string }>(req);
+    const doctor = await doctorService.update(
+      id,
+      req.body as UpdateDoctorInput,
+    );
+    res.status(200).json({ message: "Doctor updated", doctor });
   }
 
   async listPatients(req: Request, res: Response): Promise<void> {

@@ -4,7 +4,11 @@ import { buildPagination, getSkip } from "../../shared/lib/pagination";
 import { exactInsensitive } from "../../shared/lib/text-match";
 import { toPublicDoctor } from "./doctor.mapper";
 import { doctorRepository } from "./doctor.repository";
-import type { CreateDoctorInput, DoctorListQuery } from "./doctor.validation";
+import type {
+  CreateDoctorInput,
+  DoctorListQuery,
+  UpdateDoctorInput,
+} from "./doctor.validation";
 
 export class DoctorService {
   async create(input: CreateDoctorInput) {
@@ -23,6 +27,26 @@ export class DoctorService {
       throw new AppError("Doctor not found", 404);
     }
     return toPublicDoctor(doctor);
+  }
+
+  async update(id: string, input: UpdateDoctorInput) {
+    const existing = await doctorRepository.findById(id);
+    if (!existing) {
+      throw new AppError("Doctor not found", 404);
+    }
+
+    if (input.email && input.email !== existing.email) {
+      const taken = await doctorRepository.findByEmail(input.email);
+      if (taken) {
+        throw new AppError("Doctor email already exists", 409);
+      }
+    }
+
+    const updated = await doctorRepository.updateById(id, input);
+    if (!updated) {
+      throw new AppError("Doctor not found", 404);
+    }
+    return toPublicDoctor(updated);
   }
 
   async list(query: DoctorListQuery) {
