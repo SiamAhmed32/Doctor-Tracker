@@ -95,7 +95,10 @@ function DoctorFormBody({
         </div>
       ))}
       {error ? (
-        <p className="rounded-md bg-destructive-soft px-3 py-2 text-sm text-destructive">
+        <p
+          role="alert"
+          className="rounded-md bg-destructive-soft px-3 py-2 text-sm text-destructive"
+        >
           {getErrorMessage(error, "Could not save doctor")}
         </p>
       ) : null}

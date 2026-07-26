@@ -1,15 +1,19 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { FilterField } from "@/components/shared/filter-field";
 
 type DoctorsFiltersProps = {
   search: string;
   specialization: string;
   hospital: string;
+  from: string;
+  to: string;
   onSearchChange: (value: string) => void;
   onSpecializationChange: (value: string) => void;
   onHospitalChange: (value: string) => void;
+  onFromChange: (value: string) => void;
+  onToChange: (value: string) => void;
   onReset: () => void;
 };
 
@@ -17,31 +21,57 @@ export function DoctorsFilters({
   search,
   specialization,
   hospital,
+  from,
+  to,
   onSearchChange,
   onSpecializationChange,
   onHospitalChange,
+  onFromChange,
+  onToChange,
   onReset,
 }: DoctorsFiltersProps) {
   return (
-    <div className="mb-4 grid gap-3 rounded-xl border border-border bg-card p-4 shadow-sm md:grid-cols-4">
-      <Input
-        placeholder="Search doctors..."
+    <div className="mb-4 grid gap-3 rounded-xl border border-border bg-card p-4 shadow-sm sm:grid-cols-2 xl:grid-cols-3">
+      <FilterField
+        id="doctor-search"
+        label="Search"
         value={search}
-        onChange={(event) => onSearchChange(event.target.value)}
+        onChange={onSearchChange}
+        placeholder="Name, email, hospital..."
       />
-      <Input
-        placeholder="Specialization"
+      <FilterField
+        id="doctor-specialization"
+        label="Specialization"
         value={specialization}
-        onChange={(event) => onSpecializationChange(event.target.value)}
+        onChange={onSpecializationChange}
+        placeholder="e.g. Cardiology"
       />
-      <Input
-        placeholder="Hospital"
+      <FilterField
+        id="doctor-hospital"
+        label="Hospital"
         value={hospital}
-        onChange={(event) => onHospitalChange(event.target.value)}
+        onChange={onHospitalChange}
+        placeholder="Hospital name"
       />
-      <Button type="button" variant="outline" onClick={onReset}>
-        Reset
-      </Button>
+      <FilterField
+        id="doctor-from"
+        label="From date"
+        type="date"
+        value={from}
+        onChange={onFromChange}
+      />
+      <FilterField
+        id="doctor-to"
+        label="To date"
+        type="date"
+        value={to}
+        onChange={onToChange}
+      />
+      <div className="flex items-end">
+        <Button type="button" variant="outline" className="w-full" onClick={onReset}>
+          Reset
+        </Button>
+      </div>
     </div>
   );
 }

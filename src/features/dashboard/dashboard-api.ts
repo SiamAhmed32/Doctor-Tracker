@@ -3,7 +3,10 @@ import type { DashboardOverview } from "./types";
 
 export const dashboardApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getDashboard: builder.query<DashboardOverview, { doctorLimit?: number } | void>({
+    getDashboard: builder.query<
+      DashboardOverview,
+      { doctorLimit?: number; from?: string; to?: string } | void
+    >({
       query: (params) => ({
         url: "/dashboard",
         params: params ?? undefined,

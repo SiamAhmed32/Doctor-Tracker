@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "dev:server": "tsx watch src/server/index.ts",
     "seed:admin": "tsx scripts/seed-admin.ts",
     "seed:demo": "tsx scripts/seed-demo-data.ts",
+    "report:queries": "tsx scripts/query-report.ts",
+    "test": "node scripts/run-api-tests.mjs",
     "test:db": "tsx scripts/test-db.ts",
     "build": "next build",
     "start": "next start",

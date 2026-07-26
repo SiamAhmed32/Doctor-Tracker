@@ -8,7 +8,7 @@ function cookieOptions(): CookieOptions {
   return {
     httpOnly: true,
     secure: env.isProd,
-    sameSite: env.isProd ? "none" : "lax",
+    sameSite: "lax",
     maxAge: expiresInToMs(env.jwtExpiresIn, SEVEN_DAYS_MS),
     path: "/",
   };
@@ -22,7 +22,7 @@ export function clearAuthCookie(res: Response): void {
   res.clearCookie(env.cookieName, {
     httpOnly: true,
     secure: env.isProd,
-    sameSite: env.isProd ? "none" : "lax",
+    sameSite: "lax",
     path: "/",
   });
 }

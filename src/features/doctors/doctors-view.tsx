@@ -19,6 +19,8 @@ export function DoctorsView() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [specialization, setSpecialization] = useState("");
   const [hospital, setHospital] = useState("");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editing, setEditing] = useState<Doctor | null>(null);
 
@@ -36,7 +38,18 @@ export function DoctorsView() {
     search: debouncedSearch || undefined,
     specialization: specialization.trim() || undefined,
     hospital: hospital.trim() || undefined,
+    from: from || undefined,
+    to: to || undefined,
   });
+
+  function resetFilters() {
+    setSearch("");
+    setSpecialization("");
+    setHospital("");
+    setFrom("");
+    setTo("");
+    setPage(1);
+  }
 
   return (
     <div>
@@ -60,6 +73,8 @@ export function DoctorsView() {
         search={search}
         specialization={specialization}
         hospital={hospital}
+        from={from}
+        to={to}
         onSearchChange={setSearch}
         onSpecializationChange={(value) => {
           setSpecialization(value);
@@ -69,12 +84,15 @@ export function DoctorsView() {
           setHospital(value);
           setPage(1);
         }}
-        onReset={() => {
-          setSearch("");
-          setSpecialization("");
-          setHospital("");
+        onFromChange={(value) => {
+          setFrom(value);
           setPage(1);
         }}
+        onToChange={(value) => {
+          setTo(value);
+          setPage(1);
+        }}
+        onReset={resetFilters}
       />
 
       <Card className="overflow-hidden">

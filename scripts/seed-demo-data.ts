@@ -50,29 +50,33 @@ const doctors = [
   },
 ];
 
+/** doctorIndex + daysAgo create uneven caseloads and a readable trend. */
 const patientSeeds = [
-  ["Karim Hasan", 42, "01822000001", "Hypertension"],
-  ["Lubna Akter", 35, "01822000002", "Migraine"],
-  ["Sabbir Rahman", 28, "01822000003", "Diabetes"],
-  ["Nadia Islam", 51, "01822000004", "Asthma"],
-  ["Jahid Khan", 60, "01822000005", "Arthritis"],
-  ["Maliha Sultana", 22, "01822000006", "Allergy"],
-  ["Arif Mahmud", 47, "01822000007", "Hypertension"],
-  ["Ruma Begum", 33, "01822000008", "Diabetes"],
-  ["Fahim Chowdhury", 19, "01822000009", "Fracture"],
-  ["Shaila Noor", 44, "01822000010", "Dermatitis"],
-  ["Mehedi Hasan", 39, "01822000011", "Migraine"],
-  ["Tania Rahman", 27, "01822000012", "Asthma"],
-  ["Omar Faruk", 55, "01822000013", "Hypertension"],
-  ["Priya Das", 31, "01822000014", "Allergy"],
-  ["Nasir Uddin", 48, "01822000015", "Diabetes"],
-  ["Anika Tabassum", 24, "01822000016", "Anxiety"],
-  ["Shakil Ahmed", 36, "01822000017", "Back Pain"],
-  ["Rasheda Khatun", 58, "01822000018", "Arthritis"],
+  { name: "Karim Hasan", age: 42, phone: "01822000001", condition: "Hypertension", doctorIndex: 0, daysAgo: 2 },
+  { name: "Lubna Akter", age: 35, phone: "01822000002", condition: "Migraine", doctorIndex: 0, daysAgo: 2 },
+  { name: "Sabbir Rahman", age: 28, phone: "01822000003", condition: "Diabetes", doctorIndex: 0, daysAgo: 3 },
+  { name: "Nadia Islam", age: 51, phone: "01822000004", condition: "Asthma", doctorIndex: 0, daysAgo: 5 },
+  { name: "Jahid Khan", age: 60, phone: "01822000005", condition: "Arthritis", doctorIndex: 0, daysAgo: 8 },
+  { name: "Maliha Sultana", age: 22, phone: "01822000006", condition: "Allergy", doctorIndex: 1, daysAgo: 3 },
+  { name: "Arif Mahmud", age: 47, phone: "01822000007", condition: "Hypertension", doctorIndex: 1, daysAgo: 4 },
+  { name: "Ruma Begum", age: 33, phone: "01822000008", condition: "Diabetes", doctorIndex: 1, daysAgo: 9 },
+  { name: "Fahim Chowdhury", age: 19, phone: "01822000009", condition: "Fracture", doctorIndex: 1, daysAgo: 12 },
+  { name: "Shaila Noor", age: 44, phone: "01822000010", condition: "Dermatitis", doctorIndex: 2, daysAgo: 6 },
+  { name: "Mehedi Hasan", age: 39, phone: "01822000011", condition: "Migraine", doctorIndex: 2, daysAgo: 7 },
+  { name: "Tania Rahman", age: 27, phone: "01822000012", condition: "Asthma", doctorIndex: 2, daysAgo: 14 },
+  { name: "Omar Faruk", age: 55, phone: "01822000013", condition: "Hypertension", doctorIndex: 3, daysAgo: 10 },
+  { name: "Priya Das", age: 31, phone: "01822000014", condition: "Allergy", doctorIndex: 3, daysAgo: 15 },
+  { name: "Nasir Uddin", age: 48, phone: "01822000015", condition: "Diabetes", doctorIndex: 4, daysAgo: 11 },
+  { name: "Anika Tabassum", age: 24, phone: "01822000016", condition: "Anxiety", doctorIndex: 4, daysAgo: 18 },
+  { name: "Shakil Ahmed", age: 36, phone: "01822000017", condition: "Back Pain", doctorIndex: 5, daysAgo: 16 },
+  { name: "Rasheda Khatun", age: 58, phone: "01822000018", condition: "Arthritis", doctorIndex: 5, daysAgo: 20 },
+  { name: "Imtiaz Alam", age: 41, phone: "01822000019", condition: "Hypertension", doctorIndex: 0, daysAgo: 1 },
+  { name: "Farzana Haque", age: 29, phone: "01822000020", condition: "Diabetes", doctorIndex: 1, daysAgo: 1 },
 ] as const;
 
 function daysAgo(days: number) {
   const date = new Date();
+  date.setHours(12, 0, 0, 0);
   date.setDate(date.getDate() - days);
   return date;
 }
@@ -89,23 +93,22 @@ async function seedDemoData() {
   const createdDoctors = await DoctorModel.insertMany(
     doctors.map((doctor, index) => ({
       ...doctor,
-      createdAt: daysAgo(40 - index * 3),
-      updatedAt: daysAgo(40 - index * 3),
+      createdAt: daysAgo(45 - index * 4),
+      updatedAt: daysAgo(45 - index * 4),
     })),
   );
 
-  const patients = patientSeeds.map((patient, index) => {
-    const doctor = createdDoctors[index % createdDoctors.length];
-    const [name, age, phone, condition] = patient;
+  const patients = patientSeeds.map((patient) => {
+    const doctor = createdDoctors[patient.doctorIndex];
     return {
-      name,
-      age,
-      phone,
-      condition,
-      email: `${name.toLowerCase().replace(/\s+/g, ".")}@mail.com`,
+      name: patient.name,
+      age: patient.age,
+      phone: patient.phone,
+      condition: patient.condition,
+      email: `${patient.name.toLowerCase().replace(/\s+/g, ".")}@mail.com`,
       doctor: doctor._id,
-      createdAt: daysAgo(28 - (index % 26)),
-      updatedAt: daysAgo(28 - (index % 26)),
+      createdAt: daysAgo(patient.daysAgo),
+      updatedAt: daysAgo(patient.daysAgo),
     };
   });
 

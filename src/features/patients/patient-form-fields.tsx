@@ -86,12 +86,12 @@ export function PatientFormFields({
       </div>
       {showDoctorSelect ? (
         <div className="space-y-2">
-          <Label>Doctor</Label>
+          <Label htmlFor="patient-doctor">Doctor</Label>
           <Select
             value={form.doctorId || undefined}
             onValueChange={(value) => onChange({ doctorId: value })}
           >
-            <SelectTrigger>
+            <SelectTrigger id="patient-doctor">
               <SelectValue placeholder="Select doctor" />
             </SelectTrigger>
             <SelectContent>

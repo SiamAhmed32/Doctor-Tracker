@@ -15,6 +15,10 @@ export class DashboardRepository {
     return PatientModel.countDocuments();
   }
 
+  countPatientsCreated(from: Date, to: Date): Promise<number> {
+    return PatientModel.countDocuments({ createdAt: { $gte: from, $lte: to } });
+  }
+
   patientsPerDoctor(limit: number) {
     return DoctorModel.aggregate<{
       doctorId: string;

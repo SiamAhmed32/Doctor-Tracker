@@ -10,6 +10,10 @@ export type DashboardOverview = {
     doctorsCreated: number;
     patientsCreated: number;
   };
+  comparison: {
+    previousPatientsCreated: number;
+    patientRegistrationChange: number | null;
+  };
   patientsPerDoctor: Array<{
     doctorId: string;
     doctorName: string;
