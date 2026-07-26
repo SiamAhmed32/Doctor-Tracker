@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { DoctorModel } from "../src/server/features/doctors/doctor.model";
 import { PatientModel } from "../src/server/features/patients/patient.model";
+import { normalizeFilterValue } from "../src/server/shared/lib/text-match";
 
 dotenv.config({ path: ".env.local" });
 
@@ -30,6 +31,12 @@ async function printReport(label: string, explain: Promise<unknown>) {
   );
 }
 
+/**
+ * Explains the same filter shapes used in production list services:
+ * - specialization / hospital / condition → normalizeFilterValue + equality
+ * - search → $text
+ * - doctor patients → doctor ObjectId + createdAt sort
+ */
 async function reportQueries() {
   const uri = process.env.MONGODB_URI;
   if (!uri) throw new Error("MONGODB_URI is required.");
@@ -37,14 +44,22 @@ async function reportQueries() {
   await mongoose.connect(uri);
   const doctor = await DoctorModel.collection.findOne({});
 
+  // Same transforms as DoctorService.list / PatientService.list
+  const specializationFilter = {
+    specialization: normalizeFilterValue("Cardiology"),
+  };
+  const conditionFilter = {
+    condition: normalizeFilterValue("Diabetes"),
+  };
+
   await printReport(
     "Doctors: newest first",
     DoctorModel.collection.find({}).sort({ createdAt: -1 }).limit(20).explain("executionStats"),
   );
   await printReport(
-    "Doctors: specialization filter",
+    "Doctors: specialization filter (production equality)",
     DoctorModel.collection
-      .find({ specialization: "Cardiology" })
+      .find(specializationFilter)
       .sort({ createdAt: -1 })
       .limit(20)
       .explain("executionStats"),
@@ -57,9 +72,9 @@ async function reportQueries() {
       .explain("executionStats"),
   );
   await printReport(
-    "Patients: condition filter",
+    "Patients: condition filter (production equality)",
     PatientModel.collection
-      .find({ condition: "Diabetes" })
+      .find(conditionFilter)
       .sort({ createdAt: -1 })
       .limit(20)
       .explain("executionStats"),

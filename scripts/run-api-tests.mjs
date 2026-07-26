@@ -31,7 +31,12 @@ const testEnv = {
 
 function run(command, args, env = testEnv) {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, { env, stdio: "inherit" });
+    const child = spawn(command, args, {
+      env,
+      stdio: "inherit",
+      // Windows cannot spawn .cmd shims without a shell.
+      shell: process.platform === "win32",
+    });
     child.once("error", reject);
     child.once("exit", (code) => {
       if (code === 0) {

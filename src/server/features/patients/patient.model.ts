@@ -36,6 +36,7 @@ const patientSchema = new Schema(
       type: String,
       required: true,
       trim: true,
+      lowercase: true,
       maxlength: 120,
     },
     doctor: {

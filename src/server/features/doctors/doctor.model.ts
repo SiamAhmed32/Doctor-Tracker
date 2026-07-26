@@ -19,12 +19,14 @@ const doctorSchema = new Schema(
       type: String,
       required: true,
       trim: true,
+      lowercase: true,
       maxlength: 80,
     },
     hospital: {
       type: String,
       required: true,
       trim: true,
+      lowercase: true,
       maxlength: 120,
     },
     phone: {
