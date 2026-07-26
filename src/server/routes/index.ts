@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authRoutes } from "../features/auth/auth.routes";
+import { doctorRoutes } from "../features/doctors/doctor.routes";
 import {
   requireAdmin,
   requireAuth,
@@ -13,13 +14,9 @@ apiRouter.get("/health", (_req, res) => {
 
 apiRouter.use("/auth", authRoutes);
 
-// All non-auth feature routes require authentication.
 const protectedRouter = Router();
 protectedRouter.use(requireAuth, requireAdmin);
-
-protectedRouter.get("/secure-check", (_req, res) => {
-  res.status(200).json({ message: "Protected route access granted" });
-});
+protectedRouter.use("/doctors", doctorRoutes);
 
 apiRouter.use(protectedRouter);
 
