@@ -1,7 +1,7 @@
 import { AppError } from "../../shared/errors/app-error";
 import { buildCreatedAtFilter } from "../../shared/lib/date-range";
 import { buildPagination, getSkip } from "../../shared/lib/pagination";
-import { exactInsensitive } from "../../shared/lib/text-match";
+import { normalizeFilterValue } from "../../shared/lib/text-match";
 import { doctorRepository } from "../doctors/doctor.repository";
 import { toPublicPatient, toPublicPatientWithDoctor } from "./patient.mapper";
 import { patientRepository } from "./patient.repository";
@@ -25,6 +25,7 @@ export class PatientService {
 
     const patient = await patientRepository.create({
       ...input,
+      condition: normalizeFilterValue(input.condition),
       doctor: doctorId,
     });
 
@@ -71,7 +72,7 @@ export class PatientService {
     }
 
     if (query.condition) {
-      filter.condition = exactInsensitive(query.condition);
+      filter.condition = normalizeFilterValue(query.condition);
     }
 
     const useTextScore = Boolean(query.search);
@@ -101,6 +102,9 @@ export class PatientService {
 
     const { doctorId, ...fields } = input;
     const updateData: Record<string, unknown> = { ...fields };
+    if (typeof fields.condition === "string") {
+      updateData.condition = normalizeFilterValue(fields.condition);
+    }
 
     if (doctorId) {
       await this.assertDoctorExists(doctorId);

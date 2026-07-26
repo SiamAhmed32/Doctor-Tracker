@@ -1,3 +1,4 @@
+import { toDisplayLabel } from "../../shared/lib/display-label";
 import type { PatientDocument } from "./patient.model";
 
 type PopulatedDoctorRef = {
@@ -18,7 +19,7 @@ export function toPublicPatient(patient: PatientDocument) {
     age: patient.age ?? null,
     phone: patient.phone,
     email: patient.email ?? null,
-    condition: patient.condition,
+    condition: toDisplayLabel(patient.condition),
     doctorId: patient.doctor.toString(),
     createdAt: patient.createdAt,
     updatedAt: patient.updatedAt,
@@ -32,12 +33,12 @@ export function toPublicPatientWithDoctor(patient: PatientWithPopulatedDoctor) {
     age: patient.age ?? null,
     phone: patient.phone,
     email: patient.email ?? null,
-    condition: patient.condition,
+    condition: toDisplayLabel(patient.condition),
     doctor: {
       id: patient.doctor._id.toString(),
       name: patient.doctor.name,
-      specialization: patient.doctor.specialization,
-      hospital: patient.doctor.hospital,
+      specialization: toDisplayLabel(patient.doctor.specialization),
+      hospital: toDisplayLabel(patient.doctor.hospital),
     },
     createdAt: patient.createdAt,
     updatedAt: patient.updatedAt,

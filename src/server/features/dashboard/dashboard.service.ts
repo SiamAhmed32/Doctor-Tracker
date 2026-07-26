@@ -1,5 +1,6 @@
 import { env } from "../../config/env";
 import { resolveInclusiveRange } from "../../shared/lib/date-range";
+import { toDisplayLabel } from "../../shared/lib/display-label";
 import { fillDailySeries } from "../../shared/lib/fill-date-series";
 import { DoctorModel } from "../doctors/doctor.model";
 import { PatientModel } from "../patients/patient.model";
@@ -84,8 +85,14 @@ export class DashboardService {
               ),
       },
       patientsPerDoctor,
-      doctorsBySpecialization,
-      patientsByCondition,
+      doctorsBySpecialization: doctorsBySpecialization.map((item) => ({
+        ...item,
+        specialization: toDisplayLabel(item.specialization),
+      })),
+      patientsByCondition: patientsByCondition.map((item) => ({
+        ...item,
+        condition: toDisplayLabel(item.condition),
+      })),
       trends: {
         doctors: doctorTrend,
         patients: patientTrend,

@@ -1,7 +1,7 @@
 import { AppError } from "../../shared/errors/app-error";
 import { buildCreatedAtFilter } from "../../shared/lib/date-range";
 import { buildPagination, getSkip } from "../../shared/lib/pagination";
-import { exactInsensitive } from "../../shared/lib/text-match";
+import { normalizeFilterValue } from "../../shared/lib/text-match";
 import { toPublicDoctor } from "./doctor.mapper";
 import { doctorRepository } from "./doctor.repository";
 import type {
@@ -17,7 +17,11 @@ export class DoctorService {
       throw new AppError("Doctor email already exists", 409);
     }
 
-    const doctor = await doctorRepository.create(input);
+    const doctor = await doctorRepository.create({
+      ...input,
+      specialization: normalizeFilterValue(input.specialization),
+      hospital: normalizeFilterValue(input.hospital),
+    });
     return toPublicDoctor(doctor);
   }
 
@@ -42,7 +46,15 @@ export class DoctorService {
       }
     }
 
-    const updated = await doctorRepository.updateById(id, input);
+    const payload = {
+      ...input,
+      ...(input.specialization
+        ? { specialization: normalizeFilterValue(input.specialization) }
+        : {}),
+      ...(input.hospital ? { hospital: normalizeFilterValue(input.hospital) } : {}),
+    };
+
+    const updated = await doctorRepository.updateById(id, payload);
     if (!updated) {
       throw new AppError("Doctor not found", 404);
     }
@@ -55,11 +67,11 @@ export class DoctorService {
     };
 
     if (query.specialization) {
-      filter.specialization = exactInsensitive(query.specialization);
+      filter.specialization = normalizeFilterValue(query.specialization);
     }
 
     if (query.hospital) {
-      filter.hospital = exactInsensitive(query.hospital);
+      filter.hospital = normalizeFilterValue(query.hospital);
     }
 
     const useTextScore = Boolean(query.search);
