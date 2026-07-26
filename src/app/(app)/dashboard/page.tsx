@@ -1,10 +1,5 @@
-import { PagePlaceholder } from "@/components/layout/page-placeholder";
+import { DashboardView } from "@/features/dashboard/dashboard-view";
 
 export default function DashboardPage() {
-  return (
-    <PagePlaceholder
-      title="Dashboard"
-      description="Overview metrics and charts will live here next."
-    />
-  );
+  return <DashboardView />;
 }

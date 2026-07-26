@@ -1,10 +1,5 @@
-import { PagePlaceholder } from "@/components/layout/page-placeholder";
+import { PatientsView } from "@/features/patients/patients-view";
 
 export default function PatientsPage() {
-  return (
-    <PagePlaceholder
-      title="Patients"
-      description="Patient list, filters, and management UI come next."
-    />
-  );
+  return <PatientsView />;
 }

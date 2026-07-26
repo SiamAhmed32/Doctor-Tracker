@@ -1,6 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import "@/features/auth/auth-api";
+import "@/features/dashboard/dashboard-api";
+import "@/features/doctors/doctors-api";
+import "@/features/patients/patients-api";
 import { baseApi } from "./base-api";
 
 export const makeStore = () => {

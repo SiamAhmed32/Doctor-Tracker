@@ -68,6 +68,26 @@ export class DashboardRepository {
     ]);
   }
 
+  patientsByCondition() {
+    return PatientModel.aggregate<{ condition: string; count: number }>([
+      {
+        $group: {
+          _id: "$condition",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          condition: "$_id",
+          count: 1,
+        },
+      },
+      { $sort: { count: -1, condition: 1 } },
+      { $limit: 8 },
+    ]);
+  }
+
   dailyCreatedCounts(
     model: typeof DoctorModel | typeof PatientModel,
     from: Date,

@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { useLoginMutation } from "./auth-api";
 import { getErrorMessage } from "./get-error-message";
 
@@ -27,9 +28,9 @@ export function LoginForm() {
   }
 
   return (
-    <form className="space-y-4" onSubmit={onSubmit}>
+    <form className="space-y-5" method="post" onSubmit={onSubmit} noValidate>
       <div className="space-y-2">
-        <label className="text-sm font-medium" htmlFor="email">
+        <label className="text-sm font-medium text-foreground" htmlFor="email">
           Email
         </label>
         <Input
@@ -39,28 +40,32 @@ export function LoginForm() {
           placeholder="admin@doctortracker.com"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
+          className="h-11 rounded-lg"
           required
         />
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-medium" htmlFor="password">
+        <label
+          className="text-sm font-medium text-foreground"
+          htmlFor="password"
+        >
           Password
         </label>
-        <Input
+        <PasswordInput
           id="password"
-          type="password"
           autoComplete="current-password"
+          placeholder="Enter your password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           required
         />
       </div>
       {error ? (
-        <p className="rounded-md bg-destructive-soft px-3 py-2 text-sm text-destructive">
+        <p className="rounded-lg border border-red-200 bg-destructive-soft px-3 py-2.5 text-sm text-destructive">
           {getErrorMessage(error, "Unable to sign in")}
         </p>
       ) : null}
-      <Button className="w-full" type="submit" disabled={isLoading}>
+      <Button className="h-11 w-full rounded-lg text-sm font-semibold" type="submit" disabled={isLoading}>
         {isLoading ? "Signing in..." : "Sign in"}
       </Button>
     </form>

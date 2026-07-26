@@ -1,48 +1,45 @@
 import { Activity } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { LoginForm } from "@/features/auth/login-form";
+import { LoginPreview } from "@/features/auth/login-preview";
 
 export default function LoginPage() {
   return (
-    <div className="grid min-h-screen lg:grid-cols-2">
-      <div className="flex items-center justify-center px-4 py-10">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="text-2xl">Welcome back</CardTitle>
-            <CardDescription>
-              Sign in to manage doctors, patients, and healthcare analytics.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <LoginForm />
-          </CardContent>
-        </Card>
-      </div>
-      <div className="relative hidden overflow-hidden bg-primary-soft lg:block">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#2563eb14_1px,transparent_1px),linear-gradient(to_bottom,#2563eb14_1px,transparent_1px)] bg-[size:28px_28px]" />
-        <div className="relative flex h-full flex-col justify-between p-12">
-          <div className="flex items-center gap-3 text-primary">
+    <div className="grid min-h-screen lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+      <div className="flex items-center justify-center bg-background px-4 py-10 sm:px-8">
+        <div className="w-full max-w-[400px]">
+          <div className="mb-8 flex items-center gap-3 lg:hidden">
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white">
               <Activity className="h-5 w-5" />
             </span>
-            <span className="text-lg font-semibold">Doctor Tracker</span>
+            <div>
+              <p className="text-base font-semibold text-foreground">
+                Doctor Tracker
+              </p>
+              <p className="text-xs text-muted-foreground">Admin portal</p>
+            </div>
           </div>
-          <div className="max-w-md space-y-3">
-            <h2 className="text-3xl font-semibold tracking-tight text-foreground">
-              Calm, trustworthy admin tools for medical teams.
-            </h2>
+
+          <div className="mb-8 space-y-2">
+            <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+              Welcome back
+            </h1>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Track doctors, patients, and network insights from one secure
-              workspace.
+              Sign in to manage doctors, patients, and clinic analytics.
             </p>
           </div>
+
+          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-7">
+            <LoginForm />
+          </div>
+
+          <p className="mt-6 text-center text-xs text-muted-foreground">
+            Secure access for authorized administrators only.
+          </p>
         </div>
+      </div>
+
+      <div className="hidden lg:block">
+        <LoginPreview />
       </div>
     </div>
   );

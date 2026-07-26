@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Doctor Tracker
 
-## Getting Started
+Secure admin portal for managing doctors, patients, and operational analytics. Built as a fullstack Next.js app with Express mounted inside the Next.js API layer and MongoDB for persistence.
 
-First, run the development server:
+## Elevator pitch
+
+Doctor Tracker gives clinic admins a focused workspace to register clinicians, attach patients, and read live workload trends without leaving one authenticated portal. The UI is feature-sliced and driven by RTK Query; the API stays query-optimized with indexes, pagination, and aggregation pipelines so the dashboard stays fast as records grow.
+
+## Stack
+
+- **Frontend:** Next.js App Router, TypeScript, Tailwind, Radix/shadcn-style UI, Lucide, Recharts, Redux Toolkit + RTK Query
+- **Backend:** Express integrated via `src/pages/api/[...path].ts` (runs inside Next.js)
+- **Database:** MongoDB + Mongoose
+- **Auth:** httpOnly JWT cookie, seed-only admin bootstrap, login rate limiting
+
+## Setup
 
 ```bash
+cd doctor-tracker
+cp .env.example .env.local
+# fill MONGODB_URI, JWT_SECRET, SEED_ADMIN_* values
+npm install
+npm run seed:admin
+npm run seed:demo
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Demo login
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Use the admin created by `seed:admin` (defaults from `.env.example` / `.env.local`):
 
-## Learn More
+- Email: `admin@doctortracker.com`
+- Password: value of `SEED_ADMIN_PASSWORD` in `.env.local`
 
-To learn more about Next.js, take a look at the following resources:
+`seed:demo` loads **6 doctors** and **18 patients** so dashboard charts and list filters are testable immediately.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Script | Purpose |
+| --- | --- |
+| `npm run dev` | Next.js + integrated Express API on port 3000 |
+| `npm run seed:admin` | Upsert the bootstrap admin user |
+| `npm run seed:demo` | Reset demo doctors/patients sample data |
+| `npm run lint` | ESLint |
+| `npm run build` | Production build |
 
-## Deploy on Vercel
+## Architecture
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/
+  app/                 # App Router pages (login, dashboard, doctors, patients)
+  components/          # Shared UI primitives + layout shell
+  features/            # Client features (auth, dashboard, doctors, patients)
+  lib/                 # Store, helpers
+  pages/api/[...path]  # Catch-all that mounts Express
+  server/              # Express app, routes, feature modules, Mongo layer
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Feature folders keep UI, RTK endpoints, and types close together.
+- Server features follow controller → service → repository (SOLID-friendly boundaries).
+- RTK Query tag invalidation keeps lists/dashboard in sync after mutations.
+- MongoDB text indexes power search; aggregations power dashboard charts.
+
+## Technical decisions
+
+1. **Express inside Next.js (not a separate always-on process)**  
+   A Pages API catch-all mounts the Express app so REST stays familiar while deployment stays a single Next.js unit (including Vercel-friendly hosting). The handler awaits DB connect and response completion to avoid premature API resolution.
+
+2. **Seed-only admin + httpOnly cookie JWT**  
+   Public registration is intentionally removed to reduce bootstrap races and unauthorized account creation. Auth uses an httpOnly cookie (not localStorage) plus middleware/`/me` guards so the portal stays admin-scoped by default.
+
+## Routes to verify
+
+- `/login` — authentication
+- `/dashboard` — metrics + Recharts visualizations
+- `/doctors` — search/filter/paginate + create/edit sheets
+- `/doctors/[id]` — doctor detail + nested patients
+- `/patients` — global patient list, edit, delete

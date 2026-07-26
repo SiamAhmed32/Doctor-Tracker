@@ -43,9 +43,11 @@ export function SheetContent({
       <SheetOverlay />
       <DialogPrimitive.Content
         className={cn(
-          "fixed z-50 flex h-full w-[min(100%,18rem)] flex-col bg-sidebar shadow-lg transition ease-in-out",
-          side === "left" && "inset-y-0 left-0 border-r border-sidebar-border",
-          side === "right" && "inset-y-0 right-0 border-l border-sidebar-border",
+          "fixed z-50 flex h-full flex-col bg-card shadow-lg transition ease-in-out",
+          side === "left" &&
+            "inset-y-0 left-0 w-[min(100%,18rem)] border-r border-sidebar-border bg-sidebar",
+          side === "right" &&
+            "inset-y-0 right-0 w-[min(100%,28rem)] border-l border-border",
           className,
         )}
         {...props}

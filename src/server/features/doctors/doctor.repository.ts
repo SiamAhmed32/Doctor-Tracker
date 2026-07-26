@@ -27,6 +27,16 @@ export class DoctorRepository {
     return DoctorModel.findOne({ email: email.toLowerCase() });
   }
 
+  updateById(
+    id: string,
+    data: Partial<CreateDoctorInput>,
+  ): Promise<DoctorDocument | null> {
+    return DoctorModel.findByIdAndUpdate(id, data, {
+      new: true,
+      runValidators: true,
+    });
+  }
+
   findMany(
     filter: DoctorFilter,
     skip: number,

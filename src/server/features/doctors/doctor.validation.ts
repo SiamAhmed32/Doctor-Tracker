@@ -31,5 +31,12 @@ export const doctorListQuerySchema = paginationQuerySchema
     hospital: optionalText(120),
   });
 
+export const updateDoctorSchema = createDoctorSchema
+  .partial()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "At least one field is required",
+  });
+
 export type CreateDoctorInput = z.infer<typeof createDoctorSchema>;
+export type UpdateDoctorInput = z.infer<typeof updateDoctorSchema>;
 export type DoctorListQuery = z.infer<typeof doctorListQuerySchema>;
