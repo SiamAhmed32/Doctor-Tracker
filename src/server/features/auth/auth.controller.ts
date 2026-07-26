@@ -1,18 +1,9 @@
 import type { Request, Response } from "express";
 import { authService } from "./auth.service";
 import { clearAuthCookie, setAuthCookie } from "./auth.cookies";
-import type { LoginInput, RegisterInput } from "./auth.validation";
+import type { LoginInput } from "./auth.validation";
 
 export class AuthController {
-  async register(req: Request, res: Response): Promise<void> {
-    const result = await authService.register(req.body as RegisterInput);
-    setAuthCookie(res, result.token);
-    res.status(201).json({
-      message: "Registered successfully",
-      user: result.user,
-    });
-  }
-
   async login(req: Request, res: Response): Promise<void> {
     const result = await authService.login(req.body as LoginInput);
     setAuthCookie(res, result.token);

@@ -19,4 +19,8 @@ export const env = {
   isProd: process.env.NODE_ENV === "production",
   clientOrigin: process.env.CLIENT_ORIGIN || "http://localhost:3000",
   cookieName: "access_token",
+  appTimezone:
+    process.env.APP_TIMEZONE ||
+    Intl.DateTimeFormat().resolvedOptions().timeZone ||
+    "UTC",
 };

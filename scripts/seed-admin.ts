@@ -11,9 +11,15 @@ async function seedAdmin() {
     throw new Error("Missing MONGODB_URI");
   }
 
-  const email = process.env.SEED_ADMIN_EMAIL || "admin@doctortracker.com";
-  const password = process.env.SEED_ADMIN_PASSWORD || "Admin@123";
+  const email = process.env.SEED_ADMIN_EMAIL;
+  const password = process.env.SEED_ADMIN_PASSWORD;
   const name = process.env.SEED_ADMIN_NAME || "Admin";
+
+  if (!email || !password) {
+    throw new Error(
+      "SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD are required in .env.local",
+    );
+  }
 
   await mongoose.connect(uri);
 
@@ -31,9 +37,8 @@ async function seedAdmin() {
     role: "admin",
   });
 
-  console.log("Admin seeded");
-  console.log(`Email: ${email}`);
-  console.log(`Password: ${password}`);
+  console.log(`Admin seeded for ${email}`);
+  console.log("Password was taken from SEED_ADMIN_PASSWORD (not printed).");
   await mongoose.disconnect();
 }
 

@@ -2,19 +2,15 @@ import { Router } from "express";
 import { asyncHandler } from "../../shared/middleware/async-handler";
 import { validate } from "../../shared/middleware/validate";
 import { authController } from "./auth.controller";
-import { loginSchema, registerSchema } from "./auth.validation";
+import { loginSchema } from "./auth.validation";
 import { requireAdmin, requireAuth } from "./middleware/require-auth";
+import { loginRateLimit } from "./middleware/login-rate-limit";
 
 const authRoutes = Router();
 
 authRoutes.post(
-  "/register",
-  validate(registerSchema),
-  asyncHandler((req, res) => authController.register(req, res)),
-);
-
-authRoutes.post(
   "/login",
+  loginRateLimit,
   validate(loginSchema),
   asyncHandler((req, res) => authController.login(req, res)),
 );
@@ -30,5 +26,9 @@ authRoutes.get(
   requireAdmin,
   asyncHandler((req, res) => authController.me(req, res)),
 );
+
+authRoutes.use((_req, res) => {
+  res.status(404).json({ message: "Not found" });
+});
 
 export { authRoutes };
