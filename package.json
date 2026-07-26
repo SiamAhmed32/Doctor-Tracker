@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:server": "tsx watch src/server/index.ts",
+    "seed:admin": "tsx scripts/seed-admin.ts",
+    "test:db": "tsx scripts/test-db.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
