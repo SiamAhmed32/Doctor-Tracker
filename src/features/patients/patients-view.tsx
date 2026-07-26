@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/shared/page-header";
 import { PaginationBar } from "@/components/shared/pagination-bar";
+import { useGetDoctorsQuery } from "@/features/doctors/doctors-api";
 import { DeletePatientDialog } from "./delete-patient-dialog";
 import { PatientFormSheet } from "./patient-form-sheet";
+import { PatientsFilters } from "./patients-filters";
 import { PatientsTable } from "./patients-table";
 import { useGetPatientsQuery } from "./patients-api";
 import type { Patient } from "./types";
@@ -19,9 +20,14 @@ export function PatientsView() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [condition, setCondition] = useState("");
+  const [doctorId, setDoctorId] = useState("");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editing, setEditing] = useState<Patient | null>(null);
   const [deleting, setDeleting] = useState<Patient | null>(null);
+
+  const { data: doctorsData } = useGetDoctorsQuery({ page: 1, limit: 100 });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -36,13 +42,25 @@ export function PatientsView() {
     limit: 8,
     search: debouncedSearch || undefined,
     condition: condition.trim() || undefined,
+    doctorId: doctorId || undefined,
+    from: from || undefined,
+    to: to || undefined,
   });
+
+  function resetFilters() {
+    setSearch("");
+    setCondition("");
+    setDoctorId("");
+    setFrom("");
+    setTo("");
+    setPage(1);
+  }
 
   return (
     <div>
       <PageHeader
         title="Patients"
-        description="Review patient records with search and condition filters."
+        description="Review patient records with search and filters."
         actions={
           <Button
             onClick={() => {
@@ -56,32 +74,32 @@ export function PatientsView() {
         }
       />
 
-      <div className="mb-4 grid gap-3 rounded-xl border border-border bg-card p-4 shadow-sm md:grid-cols-3">
-        <Input
-          placeholder="Search patients..."
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-        />
-        <Input
-          placeholder="Condition filter"
-          value={condition}
-          onChange={(event) => {
-            setCondition(event.target.value);
-            setPage(1);
-          }}
-        />
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => {
-            setSearch("");
-            setCondition("");
-            setPage(1);
-          }}
-        >
-          Reset
-        </Button>
-      </div>
+      <PatientsFilters
+        search={search}
+        condition={condition}
+        doctorId={doctorId}
+        from={from}
+        to={to}
+        doctors={doctorsData?.data ?? []}
+        onSearchChange={setSearch}
+        onConditionChange={(value) => {
+          setCondition(value);
+          setPage(1);
+        }}
+        onDoctorIdChange={(value) => {
+          setDoctorId(value);
+          setPage(1);
+        }}
+        onFromChange={(value) => {
+          setFrom(value);
+          setPage(1);
+        }}
+        onToChange={(value) => {
+          setTo(value);
+          setPage(1);
+        }}
+        onReset={resetFilters}
+      />
 
       <Card className="overflow-hidden">
         {isLoading ? (

@@ -78,16 +78,6 @@ export const doctorsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Patient", "Dashboard", { type: "Doctor", id: "LIST" }],
     }),
-    removeDoctorPatient: builder.mutation<
-      { id: string },
-      { doctorId: string; patientId: string }
-    >({
-      query: ({ doctorId, patientId }) => ({
-        url: `/doctors/${doctorId}/patients/${patientId}`,
-        method: "DELETE",
-      }),
-      invalidatesTags: ["Patient", "Dashboard", { type: "Doctor", id: "LIST" }],
-    }),
   }),
 });
 
@@ -98,5 +88,4 @@ export const {
   useUpdateDoctorMutation,
   useGetDoctorPatientsQuery,
   useAddDoctorPatientMutation,
-  useRemoveDoctorPatientMutation,
 } = doctorsApi;
